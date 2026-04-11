@@ -6,19 +6,16 @@ struct ComposeMultiplatformImdbDemoApp: App {
 
     init() {
         // One-time SDK bootstrap. The SDK owns its own Koin DI graph,
-        // its own Ktor HTTP client, its own ViewModels, and its own
-        // Compose UI screens. We just hand it the credentials and
-        // pick the platform engine (Darwin on iOS).
+        // its own Ktor HTTP client (Darwin engine on iOS by default —
+        // Ktor 3 auto-detects since the SDK ships ktor-client-darwin),
+        // its own ViewModels, and its own Compose UI screens.
+        // SKIE bridges the Kotlin default parameters so we can omit
+        // platformHttpEngineFactory and appDeclaration here.
         ImdbSdk.shared.start(
             configuration: TmdbConfiguration(
                 bearerToken: TokenLoader.bearerToken,
-                apiKey: TokenLoader.apiKey,
-                language: "en-US",
-                baseUrl: "https://api.themoviedb.org/3",
-                imageBaseUrl: "https://image.tmdb.org/t/p"
-            ),
-            platformHttpEngineFactory: { HttpClient() },
-            appDeclaration: { _ in }
+                apiKey: TokenLoader.apiKey
+            )
         )
     }
 
