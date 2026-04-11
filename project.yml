@@ -1,0 +1,49 @@
+# XcodeGen spec — generates ComposeMultiplatformImdbDemo.xcodeproj.
+# Re-run `xcodegen generate` after editing.
+#
+# The Compose Multiplatform IMDB SDK is consumed as a local XCFramework
+# under `Frameworks/ImdbSDK.xcframework`. The README has the script that
+# downloads / extracts it after publishing — for now you build it locally
+# from a sibling clone of composemultiplatformsdk.
+
+name: ComposeMultiplatformImdbDemo
+options:
+  bundleIdPrefix: com.dallaslabs
+  deploymentTarget:
+    iOS: "16.0"
+  createIntermediateGroups: true
+
+settings:
+  base:
+    SWIFT_VERSION: "5.9"
+    DEVELOPMENT_TEAM: ""
+    CODE_SIGN_STYLE: Automatic
+    ENABLE_USER_SCRIPT_SANDBOXING: NO
+    FRAMEWORK_SEARCH_PATHS:
+      - $(inherited)
+      - $(SRCROOT)/Frameworks
+
+targets:
+  ComposeMultiplatformImdbDemo:
+    type: application
+    platform: iOS
+    sources:
+      - ComposeMultiplatformImdbDemo
+    info:
+      path: ComposeMultiplatformImdbDemo/Info.plist
+      properties:
+        CFBundleDisplayName: CMP IMDB
+        UILaunchScreen:
+          UIColorName: ""
+        UISupportedInterfaceOrientations:
+          - UIInterfaceOrientationPortrait
+        ITSAppUsesNonExemptEncryption: false
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.dallaslabs.ComposeMultiplatformImdbDemo
+        CURRENT_PROJECT_VERSION: "1"
+        MARKETING_VERSION: "1.0.0"
+        TARGETED_DEVICE_FAMILY: "1,2"
+    dependencies:
+      - framework: Frameworks/ImdbSDK.xcframework
+        embed: true

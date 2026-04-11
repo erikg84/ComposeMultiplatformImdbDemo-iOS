@@ -1,0 +1,23 @@
+# Xcode
+build/
+DerivedData/
+xcuserdata/
+*.xcuserstate
+
+# xcodegen output
+*.xcodeproj
+*.xcworkspace
+
+# SPM
+.build/
+.swiftpm/
+Package.resolved
+
+# The framework lives outside the repo — generated locally from the SDK build
+Frameworks/
+
+# Local secrets
+ComposeMultiplatformImdbDemo/tmdb-token.txt
+ComposeMultiplatformImdbDemo/tmdb-api-key.txt
+
+.DS_Store
