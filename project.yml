@@ -38,6 +38,11 @@ targets:
         UISupportedInterfaceOrientations:
           - UIInterfaceOrientationPortrait
         ITSAppUsesNonExemptEncryption: false
+        # Required by Compose Multiplatform iOS — opts the app into 120 Hz
+        # display so the Skia render loop hits the refresh deadline cleanly.
+        # Without it, ComposeUIViewController throws a strict-plist sanity
+        # check at startup and crashes.
+        CADisableMinimumFrameDurationOnPhone: true
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.dallaslabs.ComposeMultiplatformImdbDemo
