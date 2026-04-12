@@ -1,10 +1,10 @@
 import SwiftUI
+import ImdbSDK
 
 /// The iOS client owns its own navigation. The five SDK screens are
-/// explicit SwiftUI Views (defined in `Screens/SdkScreens.swift`) that
-/// internally bridge to the Compose Multiplatform rendering surface.
-/// The `UIViewControllerRepresentable` plumbing is hidden behind each
-/// View's `body` — the call site here sees only standard SwiftUI types.
+/// SwiftUI Views shipped INSIDE ImdbSDK.framework — built by SKIE's
+/// Swift Code Bundling from `src/iosMain/swift/SdkScreenViews.swift`
+/// in the SDK repo. No wrapper code lives in this client repo at all.
 ///
 /// This is a TabView, but the same Views would work just as well inside
 /// a `NavigationStack` as `navigationDestination` targets.
