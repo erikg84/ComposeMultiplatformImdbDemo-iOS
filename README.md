@@ -92,7 +92,7 @@ The community plugin (GuilhE's `KMP-ComposeUIViewController`) auto-generates the
 
 ### Future cross-repo distribution
 
-The current local-framework setup is dev-mode only. The production path is to mirror the [SwiftAndroidIMDBSdk](https://github.com/erikg84/SwiftAndroidIMDBSdk) pattern: the SDK release workflow zips the XCFramework, pushes it to GitHub Packages Maven, and updates a `composemultiplatformsdk-spm` wrapper repo's `Package.swift` `binaryTarget(url:checksum:)`. The iOS client then uses a single SPM dependency. This is documented as TODO in the SDK repo.
+The current local-framework setup is dev-mode only. The production path uses the SPM wrapper repo [`composemultiplatformsdk-spm`](https://github.com/erikg84/composemultiplatformsdk-spm) — the SDK release workflow zips the XCFramework, uploads it to a public GCS bucket, and auto-updates the wrapper repo's `Package.swift` `binaryTarget(url:checksum:)`. The iOS client then uses a single SPM dependency with no auth required.
 
 ## License
 
