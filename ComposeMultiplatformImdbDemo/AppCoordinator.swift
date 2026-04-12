@@ -1,37 +1,109 @@
 import SwiftUI
 import ImdbSDK
 
-/// The iOS client owns its own navigation. The five SDK screens are
-/// SwiftUI Views shipped INSIDE ImdbSDK.framework — built by SKIE's
-/// Swift Code Bundling from `src/iosMain/swift/SdkScreenViews.swift`
-/// in the SDK repo. No wrapper code lives in this client repo at all.
-///
-/// This is a TabView, but the same Views would work just as well inside
-/// a `NavigationStack` as `navigationDestination` targets.
 struct AppCoordinator: View {
     @State private var selection: Int = UserDefaults.standard.integer(forKey: "initialTab")
+    @State private var showDrawer = false
+    @State private var drawerDestination: DrawerDestination?
 
     var body: some View {
-        TabView(selection: $selection) {
-            HomeScreen()
-                .tabItem { Label("Home", systemImage: "house") }
-                .tag(0)
+        NavigationStack {
+            ZStack {
+                // Main content — either a tab or a drawer destination
+                if let dest = drawerDestination {
+                    drawerScreen(dest)
+                        .toolbar {
+                            ToolbarItem(placement: .navigationBarLeading) {
+                                Button { showDrawer = true } label: {
+                                    Image(systemName: "line.3.horizontal")
+                                }
+                            }
+                            ToolbarItem(placement: .navigationBarTrailing) {
+                                Button("Back to Tabs") {
+                                    drawerDestination = nil
+                                }
+                            }
+                        }
+                } else {
+                    TabView(selection: $selection) {
+                        HomeScreen()
+                            .tabItem { Label("Home", systemImage: "house") }
+                            .tag(0)
+                        MoviesScreen()
+                            .tabItem { Label("Movies", systemImage: "film") }
+                            .tag(1)
+                        TVShowsScreen()
+                            .tabItem { Label("TV", systemImage: "tv") }
+                            .tag(2)
+                        SearchScreen()
+                            .tabItem { Label("Search", systemImage: "magnifyingglass") }
+                            .tag(3)
+                        TrendingScreen()
+                            .tabItem { Label("Trending", systemImage: "flame") }
+                            .tag(4)
+                    }
+                    .toolbar {
+                        ToolbarItem(placement: .navigationBarLeading) {
+                            Button { showDrawer = true } label: {
+                                Image(systemName: "line.3.horizontal")
+                            }
+                        }
+                    }
+                }
+            }
+            .sheet(isPresented: $showDrawer) {
+                DrawerMenu { dest in
+                    showDrawer = false
+                    drawerDestination = dest
+                }
+                .presentationDetents([.medium])
+            }
+        }
+    }
 
-            MoviesScreen()
-                .tabItem { Label("Movies", systemImage: "film") }
-                .tag(1)
+    @ViewBuilder
+    private func drawerScreen(_ dest: DrawerDestination) -> some View {
+        switch dest {
+        case .countries:  CountriesScreen()
+        case .continents: ContinentsScreen()
+        case .languages:  LanguagesScreen()
+        }
+    }
+}
 
-            TVShowsScreen()
-                .tabItem { Label("TV", systemImage: "tv") }
-                .tag(2)
+// MARK: - Drawer
 
-            SearchScreen()
-                .tabItem { Label("Search", systemImage: "magnifyingglass") }
-                .tag(3)
+enum DrawerDestination: String, CaseIterable {
+    case countries  = "Countries"
+    case continents = "Continents"
+    case languages  = "Languages"
 
-            TrendingScreen()
-                .tabItem { Label("Trending", systemImage: "flame") }
-                .tag(4)
+    var icon: String {
+        switch self {
+        case .countries:  return "globe"
+        case .continents: return "map"
+        case .languages:  return "character.book.closed"
+        }
+    }
+}
+
+struct DrawerMenu: View {
+    let onSelect: (DrawerDestination) -> Void
+
+    var body: some View {
+        NavigationStack {
+            List {
+                Section("GraphQL Features") {
+                    ForEach(DrawerDestination.allCases, id: \.self) { dest in
+                        Button {
+                            onSelect(dest)
+                        } label: {
+                            Label(dest.rawValue, systemImage: dest.icon)
+                        }
+                    }
+                }
+            }
+            .navigationTitle("Menu")
         }
     }
 }
