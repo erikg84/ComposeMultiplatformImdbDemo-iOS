@@ -5,7 +5,7 @@ let package = Package(
     name: "ImdbSDKPackage",
     platforms: [.iOS(.v16)],
     dependencies: [
-        .package(id: "dallaslabs-sdk.imdb-sdk", from: "1.0.5"),
+        .package(id: "dallaslabs-sdk.imdb-sdk", from: "1.0.6"),
     ],
     targets: []
 )
