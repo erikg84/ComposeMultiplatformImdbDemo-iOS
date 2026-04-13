@@ -11,7 +11,7 @@ iOS client app consuming the [composemultiplatformsdk](https://github.com/erikg8
 | **iOS Bridging** | SKIE 0.10.11 (Touchlab) | Kotlin Flow to AsyncSequence, suspend to async, sealed to enum |
 | **Compose Rendering** | Skia/Metal via ComposeUIViewController | SDK's Compose UI renders natively via Metal — SwiftUI hosts the UIViewController |
 | **Project Generation** | XcodeGen | `project.yml` generates `.xcodeproj` — no committed Xcode project files |
-| **SDK** | ImdbSDK.xcframework | Local framework (built from SDK repo) or via Gitea Swift Registry |
+| **SDK Resolution** | Gitea Swift Package Registry | `id: "dallaslabs-sdk.imdb-sdk"` — SPM queries Gitea, downloads XCFramework from GCS automatically |
 
 ## Navigation
 
@@ -43,24 +43,27 @@ LanguagesScreen()   // GraphQL
 
 ## Setup
 
-1. **Build the SDK XCFramework** (one-time):
+1. **Configure the Gitea Swift Package Registry** (one-time per machine):
    ```bash
-   cd /path/to/composemultiplatformsdk
-   ./gradlew :imdb-sdk:assembleImdbSDKReleaseXCFramework
+   swift package-registry set --global --scope dallaslabs-sdk --allow-insecure-http \
+     http://34.60.86.141:3000/api/packages/dallaslabs-sdk/swift
    ```
-2. **Copy the framework**:
+2. **TMDB credentials** in `tmdb-token.txt` and `tmdb-api-key.txt` (gitignored)
+3. **Clone, generate, and build**:
    ```bash
-   cp -R imdb-sdk/build/XCFrameworks/release/ImdbSDK.xcframework \
-     /path/to/ComposeMultiplatformImdbDemo-iOS/Frameworks/
-   ```
-3. **TMDB credentials** in `tmdb-token.txt` and `tmdb-api-key.txt` (gitignored)
-4. **Generate Xcode project**:
-   ```bash
-   brew install xcodegen
+   git clone https://github.com/erikg84/ComposeMultiplatformImdbDemo-iOS.git
+   cd ComposeMultiplatformImdbDemo-iOS
+   swift package resolve    # fetches SDK from Gitea → GCS
    xcodegen generate
    open ComposeMultiplatformImdbDemo.xcodeproj
    ```
-5. Build and run on simulator (iOS 16+)
+4. Build and run on simulator (iOS 16+)
+
+The `Package.swift` uses a clean registry dependency:
+```swift
+.package(id: "dallaslabs-sdk.imdb-sdk", from: "1.0.6")
+```
+No local frameworks, no hardcoded zip URLs. SPM resolves the version through Gitea, which returns a `binaryTarget` pointing at GCS.
 
 ## License
 
