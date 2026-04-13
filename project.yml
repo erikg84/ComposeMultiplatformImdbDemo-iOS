@@ -14,7 +14,7 @@ settings:
 
 packages:
   ImdbSDKPackage:
-    path: .
+    path: SDKPackage
 
 targets:
   ComposeMultiplatformImdbDemo:
