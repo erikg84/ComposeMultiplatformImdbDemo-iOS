@@ -1,11 +1,3 @@
-# XcodeGen spec — generates ComposeMultiplatformImdbDemo.xcodeproj.
-# Re-run `xcodegen generate` after editing.
-#
-# The Compose Multiplatform IMDB SDK is consumed as a local XCFramework
-# under `Frameworks/ImdbSDK.xcframework`. The README has the script that
-# downloads / extracts it after publishing — for now you build it locally
-# from a sibling clone of composemultiplatformsdk.
-
 name: ComposeMultiplatformImdbDemo
 options:
   bundleIdPrefix: com.dallaslabs
@@ -19,9 +11,10 @@ settings:
     DEVELOPMENT_TEAM: ""
     CODE_SIGN_STYLE: Automatic
     ENABLE_USER_SCRIPT_SANDBOXING: NO
-    FRAMEWORK_SEARCH_PATHS:
-      - $(inherited)
-      - $(SRCROOT)/Frameworks
+
+packages:
+  ImdbSDKPackage:
+    path: .
 
 targets:
   ComposeMultiplatformImdbDemo:
@@ -38,10 +31,6 @@ targets:
         UISupportedInterfaceOrientations:
           - UIInterfaceOrientationPortrait
         ITSAppUsesNonExemptEncryption: false
-        # Required by Compose Multiplatform iOS — opts the app into 120 Hz
-        # display so the Skia render loop hits the refresh deadline cleanly.
-        # Without it, ComposeUIViewController throws a strict-plist sanity
-        # check at startup and crashes.
         CADisableMinimumFrameDurationOnPhone: true
     settings:
       base:
@@ -50,5 +39,5 @@ targets:
         MARKETING_VERSION: "1.0.0"
         TARGETED_DEVICE_FAMILY: "1,2"
     dependencies:
-      - framework: Frameworks/ImdbSDK.xcframework
-        embed: true
+      - package: ImdbSDKPackage
+        product: ImdbSDK
